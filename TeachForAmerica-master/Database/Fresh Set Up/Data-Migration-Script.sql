@@ -1,0 +1,116 @@
+CREATE OR REPLACE PROCEDURE redwooddata IS
+/******************************************************************************
+   NAME:       redwooddata
+   PURPOSE:    
+
+   REVISIONS:
+   Ver        Date        Author           Description
+   ---------  ----------  ---------------  ------------------------------------
+   1.0        5/30/2014   dheeraj.lalwani       1. Created this procedure.
+
+   NOTES:
+
+   Automatically available Auto Replace Keywords:
+      Object Name:     redwooddata
+      Sysdate:         5/30/2014
+      Date and Time:   5/30/2014, 4:32:02 PM, and 5/30/2014 4:32:02 PM
+      Username:        dheeraj.lalwani (set in TOAD Options, Procedure Editor)
+      Table Name:       (set in the "New PL/SQL Object" dialog)
+
+******************************************************************************/
+BEGIN
+    --block for region table update
+    BEGIN
+        -- delete temp table data
+        EXECUTE IMMEDIATE 'truncate table stagregion';
+        -- populate staging environment region table
+        INSERT INTO stagregion (region_code,region_name) (SELECT r.regioncode,r.name FROM redwood.region r WHERE r.regioncode IN ('CHICAGO','GNO','MEMPHIS','MISSISSIPPI','NYC'));
+        -- merge data from staging to mtld-cm matching application db.
+        MERGE INTO region r USING stagregion sr 
+        ON (r.region_code=sr.region_code)
+        WHEN MATCHED THEN 
+            UPDATE SET r.region_name=sr.region_name
+        WHEN NOT MATCHED THEN
+            INSERT (region_id,region_code,region_name) VALUES (HIBERNATE_SEQUENCE.NEXTVAL, sr.region_code,sr.region_name);
+        COMMIT;
+     EXCEPTION
+        WHEN OTHERS THEN
+            dbms_output.put_line('Error occured in migrating region table data');
+     END;
+     
+     --block for school
+     BEGIN
+     -- delete temp table data   
+        EXECUTE IMMEDIATE 'truncate table stagschool';
+        -- populate school environment stagschool table
+        
+        INSERT INTO stagschool(address,city,country,district,name,type,state,zip,region_code,school_tfa_uid,tfaschoolid) 
+        (SELECT (address.address1 || address.address2) AS address,
+            address.city, address.country,school.district,school.name,school.schooltype,address.state,address.zip,
+            region.regioncode
+            ,school.schoolid
+            ,school.tfaschoolid
+            FROM redwood.school JOIN redwood.address ON address.addressid = school.addresskey
+            JOIN redwood.region ON REGION.REGIONID = SCHOOL.REGIONKEY
+            WHERE region.regioncode IN ('CHICAGO','GNO','MEMPHIS','MISSISSIPPI','NYC') 
+            --AND LENGTH(school.tfaschoolid) > 1
+            ) ;
+            
+            
+     
+        -- merge data from staging to mtld-cm matching application db.
+        UPDATE school s SET s.latitude=null,s.longitude=null WHERE s.school_tfa_uid IN (SELECT ss.school_tfa_uid FROM stagschool ss 
+        WHERE ss.school_tfa_uid= s.school_tfa_uid AND (s.address!=ss.address OR s.state!=ss.state OR s.zip_code!=ss.zip OR s.city!=ss.city));
+
+        merge INTO school s USING (SELECT stagschool.*,region.region_id FROM stagschool, region WHERE stagschool.region_code = region.region_code) sm
+        ON (s.school_tfa_uid = sm.SCHOOL_TFA_UID)
+        WHEN MATCHED THEN 
+        update SET s.address = sm.address, s.city=sm.city,s.zip_code=sm.zip,s.state=sm.state,s.country=sm.country,s.name=sm.name, s.tfaschoolid = sm.tfaschoolid
+        WHEN NOT MATCHED THEN 
+        INSERT (school_id,address,city,country,district,name,type,state,zip_code,region_id,school_tfa_uid,tfaschoolid) VALUES
+        (HIBERNATE_SEQUENCE.NEXTVAL,sm.address,sm.city,sm.country,sm.district,sm.name,sm.type,sm.state,sm.zip,sm.region_id,sm.school_tfa_uid,sm.tfaschoolid);
+        COMMIT;
+        
+       END;
+     
+     --block for mtld table update
+     BEGIN
+     -- delete temp table data
+        EXECUTE IMMEDIATE 'truncate table stagmtld';
+        -- populate staging environment mtld table
+        INSERT INTO stagmtld (PLACEMENT_ADVISOR_TFA_UID,FIRST_NAME,LAST_NAME,REGION_CODE) (SELECT distinct personalternateid.tfaguid AS placement_advisor_tfa_uid,person.firstname AS first_name,person.lastname AS first_name,region.regioncode FROM redwood.programstaffmember JOIN redwood.associate ON  programstaffmember.associatekey = associate.associateid left JOIN redwood.personalternateid ON associate.personkey = personalternateid.personkey JOIN   redwood.Person ON person.personid =  associate.personkey left JOIN redwood.region ON region.regionid = programstaffmember.regionkey WHERE region.regioncode IN ('CHICAGO','GNO','MEMPHIS','MISSISSIPPI','NYC'));
+        -- merge data from staging to mtld-cm matching application db.
+        MERGE INTO mtld m USING (SELECT stagmtld.*,region.region_id FROM stagmtld,region WHERE stagmtld.region_code=region.region_code) sm 
+        ON (m.PLACEMENT_ADVISOR_TFA_UID=sm.PLACEMENT_ADVISOR_TFA_UID)
+        WHEN MATCHED THEN
+            UPDATE SET M.FIRST_NAME=sm.FIRST_NAME, M.LAST_NAME=sm.last_NAME, M.REGION_ID=sm.region_id
+        WHEN NOT MATCHED THEN
+            INSERT (mtld_id, placement_advisor_tfa_uid,first_name,last_name,region_id) VALUES (HIBERNATE_SEQUENCE.NEXTVAL,sm.placement_advisor_tfa_uid,sm.first_name,sm.last_name,sm.region_id);
+        COMMIT;            
+     EXCEPTION
+        WHEN OTHERS THEN
+            dbms_output.put_line('Error occured in migrating region table data');
+     END;
+    
+    --block for corp_member table update
+    BEGIN
+        --delete temp table data
+        EXECUTE IMMEDIATE 'truncate table stagcm';
+        --populate staging environment cm table
+        INSERT INTO stagcm (first_name,last_name,tfa_master_uid,school_tfa_uid,previous_advisor_id,ethnicity,region_code,corps_years,placement_status) (SELECT person.firstname,person.lastname,personalternateid.tfaguid,school.schoolid,mtld.tfaguid AS mtldid,person.ethnicity,region.regioncode,cm.corpsyear,placement.status FROM redwood.CM JOIN redwood.person ON CM.personkey = person.personid JOIN redwood.region ON CM.currentregionkey=region.regionid JOIN redwood.PERSONALTERNATEID ON CM.PERSONKEY = PERSONALTERNATEID.PERSONKEY JOIN redwood.placement ON placement.personkey = cm.personkey  JOIN redwood.school ON placement.schoolkey=school.schoolid JOIN redwood.programstaffmember ON placement.advisorkey= programstaffmember.programstaffmemberid JOIN redwood.associate ON programstaffmember.associatekey = associate.associateid JOIN redwood.personalternateid mtld ON associate.personkey = mtld.personkey AND placement.schoolyearkey 
+IN (to_char(sysdate, 'yyyy'),to_char(add_months(sysdate,-12), 'yyyy')) 
+AND placement.iscurrent = 'Y' WHERE region.regioncode IN ('CHICAGO','GNO','MEMPHIS','MISSISSIPPI','NYC'));
+        -- merge data from staging to mtld-cm matching application db.
+        MERGE INTO corp_member cm USING (SELECT stagcm.*,s.school_id,m.mtld_id,r.region_id FROM stagcm,school s, mtld m,region r WHERE s.school_tfa_uid=stagcm.school_tfa_uid AND m.placement_advisor_tfa_uid=stagcm.previous_advisor_id AND r.region_code=stagcm.region_code AND stagcm.placement_status!='COMPLETED') scm
+        ON (cm.tfa_master_uid=scm.tfa_master_uid)
+        WHEN MATCHED THEN
+            UPDATE SET cm.first_name=scm.first_name, cm.last_name=scm.last_name, cm.ethnicity=scm.ethnicity,cm.region_id=scm.region_id,cm.school_id=scm.school_id,cm.previous_advisor_id=scm.mtld_id,cm.corps_years=scm.corps_years
+        WHEN NOT MATCHED THEN
+            INSERT (cm_id, first_name,last_name,tfa_master_uid,region_id,school_id,previous_advisor_id,corps_years,ethnicity) VALUES (HIBERNATE_SEQUENCE.NEXTVAL,scm.first_name,scm.last_name,scm.tfa_master_uid,scm.region_id,scm.school_id,scm.mtld_id,scm.corps_years,scm.ethnicity);
+        COMMIT;
+    EXCEPTION
+        WHEN OTHERS THEN
+            dbms_output.put_line('Error occured in migrating cm table data');
+    END;
+END redwooddata;
+

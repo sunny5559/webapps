@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>MTLDManager Web</display-name>
+  <context-param>
+    <param-name>log4jConfigLocation</param-name>
+    <param-value>classpath:log4j.properties</param-value>
+  </context-param>
+  
+  <context-param>
+  <param-name>webAppRootKey</param-name>
+  <param-value>myWebapp-instance-root</param-value>
+</context-param>
+
+  <listener>
+    <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+  </listener>
+  
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/mtldapp-servlet.xml 
+			/WEB-INF/classes/applicationContext.xml  
+		</param-value>
+	</context-param>
+	
+	<filter>
+	  <filter-name>requestContextFilter</filter-name>
+	  <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
+    </filter>
+    
+	<filter-mapping>
+		<filter-name>requestContextFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<listener>
+	<listener-class>
+            org.tfa.mtld.web.security.TFASessionListener
+        </listener-class>
+  </listener>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	
+	 <listener>
+	    <listener-class>
+	      org.springframework.security.web.session.HttpSessionEventPublisher
+	    </listener-class>
+    </listener>
+	
+	<servlet>
+		<servlet-name>mtldapp</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mtldapp</servlet-name>
+		 <url-pattern>/</url-pattern> 
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>mtldapp</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+	
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	
+	<!-- The above setting is apply for the entire web application, and session will be kill by container if client doesn’t make any request after 10 minutes. -->
+	<session-config>
+		<session-timeout>10</session-timeout>
+	</session-config>
+
+	<error-page>
+	    <error-code>404</error-code>
+	    <location>/resourceNotFound.jsp</location>
+	</error-page>
+	
+	<error-page>
+    	<error-code>405</error-code>
+    	<location>/accessDenied.jsp</location>
+	</error-page>
+	   
+</web-app>

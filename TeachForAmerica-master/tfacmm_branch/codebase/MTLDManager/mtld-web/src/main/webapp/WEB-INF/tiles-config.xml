@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+ 
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+        "http://tilles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+
+<definition name="loginTemplate" id="loginTemplate" template="/WEB-INF/layout/loginTemplate.jsp">
+         <put-attribute name="title" value="${title}"/>
+        <put-attribute name="body" value="${body}"/>
+        <put-attribute name="footer" value="/WEB-INF/layout/footer.jsp" />
+    </definition>
+    
+   <definition name="baseTemplate" id="baseTemplate" template="/WEB-INF/layout/baseLayout.jsp">
+		<put-attribute name="title" value="${title}" />
+		<put-attribute name="header" value="/WEB-INF/layout/header.jsp" />
+		<put-attribute name="body" value="${body}" />
+		<!-- <put-attribute name="menu" value="/WEB-INF/layout/menu.jsp" /> -->
+		<put-attribute name="footer" value="/WEB-INF/layout/footer.jsp" />
+</definition>
+
+<!-- Mapping for Login Page-->
+<definition name="login" id="login" extends="loginTemplate">
+		<put-attribute name="body" value="/WEB-INF/jsp/login.jsp"/>
+		<put-attribute name="title" type="string" value="Login Page" />
+		<put-attribute name="footer" type="string" value="" />
+</definition>
+
+<!-- Mapping for Criteria List Page-->
+<definition name="criteriaList" id="criteriaList" extends="baseTemplate">
+		<put-attribute name="body" value="/WEB-INF/jsp/criteriaList.jsp"/>
+		<put-attribute name="title" type="string" value="Criteria List" />
+		<put-attribute name="footer" type="string" value="" />
+</definition>
+<definition name="selectCriteria" id="selectCriteria" extends="baseTemplate">
+		<put-attribute name="body" value="/WEB-INF/jsp/criteriaList.jsp"/>
+		<put-attribute name="title" type="string" value="Criteria List" />
+		<put-attribute name="footer" type="string" value="" />
+</definition>
+
+<!-- Mapping for Home Page-->
+<definition name="home" id="home" extends="baseTemplate">
+		<put-attribute name="body" value="/WEB-INF/jsp/home.jsp"/>
+		<put-attribute name="title" type="string" value="Home Page" />
+		<put-attribute name="footer" type="string" value="" />
+</definition>
+
+<!-- Mapping for Cohorts Page-->
+<definition name="cohorts" id="cohorts" extends="baseTemplate">
+		<put-attribute name="body" value="/WEB-INF/jsp/cohorts.jsp"/>
+		<put-attribute name="title" type="string" value="CM Cohorts" />
+		<put-attribute name="footer" type="string" value="" />
+</definition>
+
+
+  <!--  Mapping for Forgot Password Page -->
+    <definition name="forgotPassword" id="forgotPasswordId" extends="loginTemplate">
+        <put-attribute name="body" value="/WEB-INF/jsp/forgotPassword.jsp"/>
+        <put-attribute name="title" type="string" value="TFA-Forgot Password" />
+    </definition>
+
+
+<!-- Added by Divesh Solanki, required changes once design is ready for these pages -->
+<definition name="file_upload_form" id="file_upload_form" extends="baseTemplate">
+		<put-attribute name="body" value="/WEB-INF/jsp/file_upload_form.jsp"/>
+		<put-attribute name="title" type="string" value="Import file" />
+		<put-attribute name="footer" type="string" value="" />
+</definition>
+
+<definition name="file_upload_success" id="file_upload_success" extends="baseTemplate">
+		<put-attribute name="body" value="/WEB-INF/jsp/file_upload_success.jsp"/>
+		<put-attribute name="title" type="string" value="File Imported" />
+		<put-attribute name="footer" type="string" value="" />
+</definition>
+
+<!-- Changes done by Divesh Solanki end here -->
+
+<!-- Added by Arun for accessDenied page -->
+<definition name="accessDenied" extends="loginTemplate">
+        <put-attribute name="body" value="/WEB-INF/jsp/accessDenied.jsp"/>
+        <put-attribute name="title" type="string" value="accessDenied"/>
+ </definition>
+ <!--  Arun Ends for accessDenied page -->
+ 
+ <!-- Added by Arun for Custom Error Page -->
+ <definition name="customError" id="customError" extends="baseTemplate">
+		<put-attribute name="body" value="/WEB-INF/jsp/error//custom_error.jsp"/>
+		<put-attribute name="title" type="string" value="Custom Error" />
+		<put-attribute name="footer" type="string" value="" />
+</definition>
+ <!-- Ended for Custom Error Page -->
+
+</tiles-definitions>

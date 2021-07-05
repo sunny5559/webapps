@@ -1,0 +1,158 @@
+ALTER TABLE MTLD  ADD (MD_TLD  VARCHAR2(1024 CHAR));
+
+
+update mtld set LONGITUDE='' , LATITUDE='';
+alter table mtld modify (LATITUDE number(12,8) , LONGITUDE number(12,8));
+
+
+update school set LONGITUDE='' , LATITUDE='';
+alter table school modify (LATITUDE number(12,8) , LONGITUDE number(12,8));
+
+update cohort_detail set criteria_score ='';
+ALTER TABLE cohort_detail MODIFY criteria_score NVARCHAR2(2000);
+
+
+update criteria_category set name='Geographic' where name='Geography';
+
+alter table cohort add overDistance number(1);
+alter table cohort_detail add is_NotFitForCohort number(1);
+
+alter table mtld drop column school_id;
+
+alter table cohort add basicsCriteriaPer varchar2(20);
+
+alter table cohort add contentCriteriaPer varchar2(20);
+
+alter table cohort add geographicCriteriaPer varchar2(20);
+
+alter table cohort add relationshipsCriteriaPer varchar2(20);
+
+alter table cohort add max_distance varchar2(20);
+
+alter table COHORT_DETAIL add  FIRST_SEEDING_CORPSMEMBER  CHAR(1);
+
+commit;
+
+ALTER TABLE CORP_MEMBER
+ADD (ethnicity VARCHAR2(255 BYTE));
+
+alter table mtld drop column  SCHOOL_DISTRICT_CORPS;
+
+CREATE UNIQUE INDEX TFATEST.MTLD_KEY ON TFATEST.MTLD
+(MTLD_ID, REGION_ID);
+CREATE UNIQUE INDEX TFATEST.CORPS_KEY ON TFATEST.CORP_MEMBER
+(CM_ID, IS_HIRED, REGION_ID, TFA_MASTER_UID);
+
+
+/*23/04/2014-@Author-Dheeraj 
+Purpose- CM_Filter table is no more in use.*/
+alter table corp_member drop column filter_id;
+
+drop table cm_filter;
+/*24/04/2014- @Author - Arun
+Purpose- Added new column to track user logged in status.
+*/
+ALTER TABLE TFATEST.TFA_USER
+ADD (is_logged_in NUMBER(1));
+
+/*24/04/2014- @Author - Arun
+Purpose- Renamed the column names and changed the datatypes.
+*/
+ALTER TABLE CORP_MEMBER ADD CORPS_YEARS NUMBER(10);
+UPDATE CORP_MEMBER SET CORPS_YEARS=CORPSYEAR;
+ALTER TABLE CORP_MEMBER DROP COLUMN CORPSYEAR;
+
+ALTER TABLE CORP_MEMBER ADD PERSON_COLOR NUMBER(1);
+UPDATE CORP_MEMBER SET PERSON_COLOR=PERSON_OF_COLOR;
+ALTER TABLE CORP_MEMBER DROP COLUMN PERSON_OF_COLOR;
+ 
+ALTER TABLE TFATEST.CORP_MEMBER
+ADD (CORPS_YEARS NUMBER(10));
+
+ALTER TABLE TFATEST.CORP_MEMBER
+ADD (PERSON_COLOR NUMBER(1));
+
+
+ALTER TABLE MTLD ADD CURRENT_TENURE1 NUMBER(10);
+UPDATE MTLD SET CURRENT_TENURE1=CURRENT_TENURE;
+ALTER TABLE MTLD DROP COLUMN CURRENT_TENURE;
+ALTER TABLE MTLD RENAME COLUMN CURRENT_TENURE1 TO CURRENT_TENURE;
+
+ALTER TABLE MTLD ADD LOW_INCOME_BACKGROUND1 NUMBER(1);
+UPDATE MTLD SET LOW_INCOME_BACKGROUND1=LOW_INCOME_BACKGROUND;
+ALTER TABLE MTLD DROP COLUMN LOW_INCOME_BACKGROUND;
+ALTER TABLE MTLD RENAME COLUMN LOW_INCOME_BACKGROUND1 TO LOW_INCOME_BACKGROUND;
+
+ALTER TABLE MTLD ADD PERSON_COLOR1 NUMBER(1);
+update mtld set person_color = '0' where person_color='N';
+update mtld set person_color = '1' where person_color='Y';
+UPDATE MTLD SET PERSON_COLOR1=PERSON_COLOR;
+ALTER TABLE MTLD DROP COLUMN PERSON_COLOR;
+ALTER TABLE MTLD RENAME COLUMN PERSON_COLOR1 TO PERSON_COLOR;
+
+alter table CORP_MEMBER drop (DOB,GENDER,HIRING_STAGE,HOME_PHONE,PROVINCE,SSN);
+/*24/04/2014- @Author - Arun Ends*/
+
+
+/*24/04/2014- @Author - Dheeraj
+Purpose- Index created for the columns region_id,school_id,cohort_id of tables mtld,cohort,school,cohort_detail
+*/
+
+CREATE INDEX cohort_region_id ON Cohort(region_id);
+CREATE INDEX mld_region_id ON mtld(region_id);
+CREATE INDEX school_region_id ON school(region_id);
+CREATE INDEX cohort_detail_cohort_id ON Cohort_detail(cohort_id);
+CREATE INDEX corp_member_school_id ON corp_member(school_id);
+
+/*
+Added by Lovely 30/04/2014
+*/
+alter table REGION drop column cohort_count;
+alter table corp_member drop column is_hired;
+
+ALTER TABLE COHORT RENAME COLUMN basicsCriteriaPer TO BASICS_CRITERIA_PER;
+ALTER TABLE COHORT RENAME COLUMN contentCriteriaPer TO CONTENT_CRITERIA_PER;
+ALTER TABLE COHORT RENAME COLUMN geographicCriteriaPer TO GEOGRAPHIC_CRITERIA_PER;
+ALTER TABLE COHORT RENAME COLUMN RELATIONSHIPSCRITERIAPER TO RELATIONSHIPS_CRITERIA_PER;
+/*
+Added by Lovely 05/05/2014
+*/
+ALTER TABLE CORP_MEMBER ADD HIRED_STATUS varchar2(50);
+
+
+
+/*12/05/2014- @Author - Dheeraj
+Purpose- Index created for the column is_final_cohort of table cohort
+*/
+create index cohort_is_final_cohort_idx on cohort(is_final_cohort);
+
+
+
+/*14/05/2014- @Author - Dheeraj
+Purpose- Removed unused column cell_phone from corp_member table
+*/
+alter table corp_member drop column cell_phone;
+
+/*26/05/2014- @Author - Lovely
+Purpose- update CLASS_API column value in   CRITERIA table for criteria id =16
+*/
+update CRITERIA set CLASS_API = 'MTLDDistrictScoringCriteria' where CRITERIA_ID=16;
+
+/*MTLD Portfolio CR*/
+CREATE TABLE  MTLD_SCHOOL
+(
+  ID         NUMBER(10) NOT NULL,
+  MTLD_ID    NUMBER(10),
+  SCHOOL_ID  NUMBER(10)
+);
+
+ALTER TABLE  MTLD_SCHOOL ADD PRIMARY KEY (ID);
+
+
+ALTER TABLE  MTLD_SCHOOL ADD UNIQUE (mtld_id,school_Id);
+
+alter table school drop column mtld_id;
+
+alter table school add TFASCHOOLID varchar2(20);
+
+/*End*/

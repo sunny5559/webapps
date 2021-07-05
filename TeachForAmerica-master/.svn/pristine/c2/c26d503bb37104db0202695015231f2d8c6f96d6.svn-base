@@ -1,0 +1,451 @@
+package org.tfa.mtld.data.model;
+
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+/**
+ * CorpMember class mapped with corp_member table.
+ * 
+ * @author vaibhav.poorey.
+ * @version 1.0, 12 March, 2014.
+ */
+
+@Entity
+@Table(name = "corp_member")
+public class CorpsMember implements Serializable, Comparator<CorpsMember> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "cm_id")
+	private Integer id;
+
+	@Column(name = "tfa_master_uid")
+	private String tfaMasterUID;
+
+	@Column(name = "first_name")
+	private String firstName;
+
+	@Column(name = "last_name")
+	private String lastName;
+
+	@Column(name = "address")
+	private String address;
+
+	@Column(name = "city")
+	private String city;
+
+	@Column(name = "state")
+	private String state;
+
+	@Column(name = "zip_code")
+	private String zipCode;
+
+	@Column(name = "country")
+	private String country;
+	
+	@ManyToOne
+	@JoinColumn(name = "region_id")
+	private Region region;
+
+	@Column(name = "person_color")
+	private Boolean personOfColor;
+
+	@Column(name = "low_income_background")
+	private Boolean islowIncomeBackground;
+
+	@Column(name = "grade_level")
+	private String gradeLevel;
+
+	@Column(name = "subject_group")
+	private String subjectGroup;
+
+	@Column(name = "subject_modifier")
+	private String subjectModifier;
+
+	@Column(name = "subject_modifier_description")
+	private String subjectModifierDesc;
+
+	@Column(name = "partner_type_code")
+	private String partnerTypeCode;
+
+	@Column(name = "cmo_affilation")
+	private String cmoAffiliation;
+
+	@Column(name = "feeder_pattern_hs")
+	private String feederPatternHS;
+
+	@ManyToOne
+	@JoinColumn(name = "current_advisor_id")
+	private MTLD currentAdvisor;
+
+	@ManyToOne
+	@JoinColumn(name = "previous_advisor_id")
+	private MTLD previousAdvisor;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "school_id")
+	private School school;
+
+	@ManyToOne
+	@JoinColumn(name = "principal_prefrence_id")
+	private MTLD mtld;
+
+	
+	@Column(name = "second_gen_cm")
+	private Boolean isSecondGenCM;
+
+	@Column(name = "created_by")
+	private String createdBy;
+
+	@Column(name = "created_date")
+	private Date createdDate;
+
+	@Column(name = "updated_by")
+	private String updatedBy;
+
+	@Column(name = "updated_date")
+	private Date updatedDate;
+
+	// added by lovely ram
+	@Column(name = "hired_status")
+	private String hiredStatus;
+	
+	
+
+	transient private double totalScore;
+
+
+	@Column(name = "corps_years")
+	private Integer corpsYear;
+
+	//Added by Divesh Solanki for export functionality
+	//This field will just comes in and goes out
+	@Column(name = "ethnicity")
+	private String ethnicity;
+	
+	
+	public String getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(String ethnicity) {
+		this.ethnicity = ethnicity;
+	}
+
+
+
+	public MTLD getCurrentAdvisor() {
+		return currentAdvisor;
+	}
+
+	public void setCurrentAdvisor(MTLD currentAdvisor) {
+		this.currentAdvisor = currentAdvisor;
+	}
+
+	public MTLD getPreviousAdvisor() {
+		return previousAdvisor;
+	}
+
+	public void setPreviousAdvisor(MTLD previousAdvisor) {
+		this.previousAdvisor = previousAdvisor;
+	}
+
+	public MTLD getMtld() {
+		return mtld;
+	}
+
+	public void setMtld(MTLD mtld) {
+		this.mtld = mtld;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getTfaMasterUID() {
+		return tfaMasterUID;
+	}
+
+	public void setTfaMasterUID(String tfaMasterUID) {
+		this.tfaMasterUID = tfaMasterUID;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+
+	
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+
+	public Region getRegion() {
+		return region;
+	}
+
+	public void setRegion(Region region) {
+		this.region = region;
+	}
+
+	public Boolean getPersonOfColor() {
+		return personOfColor;
+	}
+
+	public void setPersonOfColor(Boolean personOfColor) {
+		this.personOfColor = personOfColor;
+	}
+
+	public Boolean getIslowIncomeBackground() {
+		return islowIncomeBackground;
+	}
+
+	public void setIslowIncomeBackground(Boolean islowIncomeBackground) {
+		this.islowIncomeBackground = islowIncomeBackground;
+	}
+
+	
+	public String getGradeLevel() {
+		return gradeLevel;
+	}
+
+	public void setGradeLevel(String gradeLevel) {
+		this.gradeLevel = gradeLevel;
+	}
+
+	public String getSubjectGroup() {
+		return subjectGroup;
+	}
+
+	public void setSubjectGroup(String subjectGroup) {
+		this.subjectGroup = subjectGroup;
+	}
+
+	public String getSubjectModifier() {
+		return subjectModifier;
+	}
+
+	public void setSubjectModifier(String subjectModifier) {
+		this.subjectModifier = subjectModifier;
+	}
+
+	public String getSubjectModifierDesc() {
+		return subjectModifierDesc;
+	}
+
+	public void setSubjectModifierDesc(String subjectModifierDesc) {
+		this.subjectModifierDesc = subjectModifierDesc;
+	}
+
+	public String getPartnerTypeCode() {
+		return partnerTypeCode;
+	}
+
+	public void setPartnerTypeCode(String partnerTypeCode) {
+		this.partnerTypeCode = partnerTypeCode;
+	}
+
+
+	public String getCmoAffiliation() {
+		//Temp-Fix: Commented by Divesh Solanki
+		//As per client response this value comes through school
+		//return cmoAffiliation;
+		if(school != null){
+			return school.getCmoAffiliation();
+		}
+		return "" ; 
+	}
+
+	public void setCmoAffiliation(String cmoAffiliation) {
+		this.cmoAffiliation = cmoAffiliation;
+	}
+
+	public String getFeederPatternHS() {
+		return feederPatternHS;
+	}
+
+	public void setFeederPatternHS(String feederPatternHS) {
+		this.feederPatternHS = feederPatternHS;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public Date getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(Date updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	public School getSchool() {
+		return school;
+	}
+
+	public void setSchool(School school) {
+		this.school = school;
+	}
+
+	public Integer getCorpsYear() {
+		return corpsYear;
+	}
+
+	public void setCorpsYear(Integer corpsYear) {
+		this.corpsYear = corpsYear;
+	}
+
+
+
+	public double getTotalScore() {
+		return totalScore;
+	}
+
+	public void setTotalScore(double totalScore) {
+		this.totalScore = totalScore;
+	}
+
+	public Boolean getIsSecondGenCM() {
+		return isSecondGenCM;
+	}
+
+	public void setIsSecondGenCM(Boolean isSecondGenCM) {
+		this.isSecondGenCM = isSecondGenCM;
+	}
+	
+	
+
+	public String getHiredStatus() {
+		return hiredStatus;
+	}
+
+	public void setHiredStatus(String hiredStatus) {
+		this.hiredStatus = hiredStatus;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+
+		CorpsMember corpsMember = (CorpsMember) o;
+
+		if (id != null ? !id.equals(corpsMember.id) : corpsMember.id != null) {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : 0;
+	}
+
+	@Override
+	public int compare(CorpsMember o1, CorpsMember o2) {
+		if (o1.getTotalScore() < o2.getTotalScore())
+			return -1;
+		if (o1.getTotalScore() > o2.getTotalScore())
+			return 1;
+		return 0;
+
+	}
+}

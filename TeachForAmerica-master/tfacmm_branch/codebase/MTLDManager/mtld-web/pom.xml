@@ -1,0 +1,278 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>MTLDManager</artifactId>
+    <groupId>com.mtld</groupId>
+    <version>0.0.1</version>
+  </parent>
+  <artifactId>mtld-web</artifactId>
+  <packaging>war</packaging>
+  <name>mtld-web</name>
+  <description>mtld-web</description>
+  <!-- <version>1.0.0</version> -->
+ 
+   <!-- Properties for build -->
+  <properties>
+     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <mtld-services.version>1.0.0</mtld-services.version> 
+    <tomcat.home>${env.CATALINA_HOME}</tomcat.home>
+  </properties>
+  <build>
+    <filters>
+      <filter>${project.basedir}/src/main/filters/${project.env}.properties</filter>
+    </filters>
+   <finalName>mtld-web</finalName>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <!-- <classifier>${project.env}</classifier> -->
+          <warName>${project.build.finalName}<!-- -${project.version} --></warName>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <version>1.9.0</version>
+        <configuration>
+          <header>${project.basedir}/../src/etc/header.txt</header>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.13</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-junit47</artifactId>
+            <version>2.13</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+
+
+	<plugin>
+		<groupId>pl.project13.maven</groupId>
+		<artifactId>git-commit-id-plugin</artifactId>
+		<version>2.1.7</version>
+	<!-- 	<executions>
+			<execution>
+				<goals>
+					<goal>revision</goal>
+				</goals>
+			</execution>
+		</executions> -->
+
+		<configuration>
+			<!-- that's the default value, you don't have to set it -->
+			<prefix>git</prefix>
+
+			<!-- that's the default value -->
+			<dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
+
+			<!-- true is default here, it prints some more information during the 
+				build -->
+			<verbose>false</verbose>
+
+			<!-- If you'd like to tell the plugin where your .git directory is, use 
+				this setting, otherwise we'll perform a search trying to figure out the right 
+				directory. It's better to add it explicite IMHO. -->
+			<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+
+			<!-- ALTERNATE SETUP - GENERATE FILE -->
+			<!-- If you want to keep git information, even in your WAR file etc, use 
+				this mode, which will generate a properties file (with filled out values) 
+				which you can then normally read using new Properties().load(/**/) -->
+
+			<!-- this is true by default; You may want to set this to false, if the 
+				plugin should run inside a <packaging>pom</packaging> project. Most projects 
+				won't need to override this property. For an use-case for this kind of behaviour 
+				see: https://github.com/ktoso/maven-git-commit-id-plugin/issues/21 -->
+			<skipPoms>true</skipPoms>
+
+			<!-- this is false by default, forces the plugin to generate the git.properties 
+				file -->
+			<generateGitPropertiesFile>true</generateGitPropertiesFile>
+
+			<!-- The path for the to be generated properties file, it's relative to 
+				${project.basedir} -->
+			<generateGitPropertiesFilename>target/classes/git.properties</generateGitPropertiesFilename>
+
+			<!-- true by default, controls whether the plugin will fail when no .git 
+				directory is found, when set to false the plugin will just skip execution -->
+			<!-- @since 2.0.4 -->
+			<failOnNoGitDirectory>false</failOnNoGitDirectory>
+
+			<!-- @since 2.1.0 -->
+			<!-- read up about git-describe on the in man, or it's homepage - it's 
+				a really powerful versioning helper and the recommended way to use git-commit-id-plugin. 
+				The configuration bellow is optional, by default describe will run "just 
+				like git-describe on the command line", even though it's a JGit reimplementation. -->
+			<gitDescribe>
+
+				<!-- don't generate the describe property -->
+				<skip>false</skip>
+
+				<!-- if no tag was found "near" this commit, just print the commit's 
+					id instead, helpful when you always expect this field to be not-empty -->
+				<always>false</always>
+				<!-- how many chars should be displayed as the commit object id? 7 is 
+					git's default, 0 has a special meaning (see end of this README.md), and 40 
+					is the maximum value here -->
+				<abbrev>7</abbrev>
+
+				<!-- when the build is triggered while the repo is in "dirty state", 
+					append this suffix -->
+				<dirty>-dirty</dirty>
+
+				<!-- always print using the "tag-commits_from_tag-g_commit_id-maybe_dirty" 
+					format, even if "on" a tag. The distance will always be 0 if you're "on" 
+					the tag. -->
+				<forceLongFormat>false</forceLongFormat>
+			</gitDescribe>
+		</configuration>
+
+	</plugin>
+
+	<!-- <plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>properties-maven-plugin</artifactId>
+		<version>1.0-alpha-2</version>
+		<executions>
+			<execution>
+				<phase>initialize</phase>
+				<goals>
+					<goal>read-project-properties </goal>
+				</goals>
+				<configuration>
+					<files>
+						<file>src/main/resources/version.properties</file>
+					</files>
+				</configuration>
+			</execution>
+		</executions>
+	</plugin> -->
+            
+    </plugins>
+  </build>
+ <repositories>
+        <repository>
+            <id>spring-dbunit</id>
+            <url>http://repository.excilys.com/content/repositories/releases</url>
+        </repository>
+    </repositories>
+  <dependencies>
+        <!-- utilities -->
+        
+         <dependency>
+      <groupId>com.mtld</groupId>
+      <artifactId>mtld-services</artifactId>
+      <version>${mtld-services.version}</version>
+    </dependency>
+        
+     <!--    <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+ -->
+ 
+
+        <!-- Test dependency -->
+  <!--       <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency> -->
+
+        <dependency>
+            <groupId>com.mycila.maven-license-plugin</groupId>
+            <artifactId>maven-license-plugin</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+		
+		<!-- Added by Divesh Solanki for Import functionality -->
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>3.10-FINAL</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>3.10-FINAL</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.10-FINAL</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-excelant</artifactId>
+		    <version>3.10-FINAL</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml-schemas</artifactId>
+		    <version>3.10-FINAL</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-scratchpad</artifactId>
+		    <version>3.10-FINAL</version>
+		</dependency>
+	<!-- Changes added by Divesh Solanki end here -->
+
+
+
+	<!-- changes by vaibhav for controller Junit test case.Start  -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.8.4</version>
+		</dependency>
+	 <!-- End -->
+
+    </dependencies>
+  <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <project.env>dev</project.env>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <project.env>prod</project.env>
+            </properties>
+        </profile>
+        <profile>
+            <id>uat</id>
+            <properties>
+                <project.env>uat</project.env>
+                <hibernate.hbm2ddl.auto>create-drop</hibernate.hbm2ddl.auto>
+            </properties>
+            <repositories>
+                <repository>
+                    <id>spring-dbunit</id>
+                    <url>http://repository.excilys.com/content/repositories/releases</url>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+ 
+</project>

@@ -1,0 +1,6 @@
+//Author: Divesh Solanki
+Files placed in this folder needs to be executed in following order,
+
+1. TFACreateDB.sql 
+2. TFAInsertDB.sql
+3. TFASchemaUpdate.sql

@@ -1,0 +1,94 @@
+
+log4j.rootLogger=${log.level}, console, allOutput, errorOutput
+
+
+# All messages
+log4j.appender.FIRST=org.apache.log4j.RollingFileAppender
+log4j.appender.FIRST.File =${catalina.base}/logs/mtld-web.log
+log4j.appender.FIRST.DatePattern = '.'yyyy-MM-dd
+
+log4j.appender.FIRST.Append=true
+log4j.appender.FIRST.MaxFileSize=10MB
+log4j.appender.FIRST.MaxBackupIndex=100
+ 
+log4j.appender.FIRST.layout=org.apache.log4j.PatternLayout
+log4j.appender.FIRST.layout.ConversionPattern=%d{ISO8601} %-5p [%c{3}] %x - %m%n
+log4j.appender.FIRST.Encoding=UTF-8
+
+# Error messages
+log4j.appender.errorOutput=org.apache.log4j.RollingFileAppender
+log4j.appender.errorOutput.File =${catalina.base}/logs/mtld-web-error.log
+log4j.appender.errorOutput.Append=true
+log4j.appender.errorOutput.MaxFileSize=10MB
+
+###################### SERVICE #########################
+# All messages
+log4j.appender.SECOND=org.apache.log4j.RollingFileAppender
+log4j.appender.SECOND.File =${catalina.base}/logs/mtld-services.log
+log4j.appender.SECOND.DatePattern = '.'yyyy-MM-dd
+log4j.appender.SECOND.Append=true
+ log4j.appender.SECOND.MaxFileSize=10MB
+
+ log4j.appender.SECOND.MaxBackupIndex=100
+log4j.appender.SECOND.layout=org.apache.log4j.PatternLayout
+log4j.appender.SECOND.layout.ConversionPattern=%d{ISO8601} %-5p [%c{3}] %x - %m%n
+log4j.appender.SECOND.Encoding=UTF-8
+
+# Error messages
+log4j.appender.errorOutput=org.apache.log4j.RollingFileAppender
+log4j.appender.errorOutput.File =${catalina.base}/logs/mtld-services-error.log
+log4j.appender.errorOutput.Append=true
+ log4j.appender.errorOutput.MaxFileSize=10MB
+##################### SERVICE #########################
+
+ log4j.appender.errorOutput.MaxBackupIndex=100
+log4j.appender.errorOutput.DatePattern = '.'yyyy-MM-dd
+log4j.appender.errorOutput.layout=org.apache.log4j.PatternLayout
+log4j.appender.errorOutput.layout.ConversionPattern=%d{ISO8601} %-5p [%c{3}] %ex - %m%n
+log4j.appender.errorOutput.threshold=error
+
+
+####################### DATA #########################
+# All messages
+log4j.appender.THIRD=org.apache.log4j.RollingFileAppender
+log4j.appender.THIRD.File =${catalina.base}/logs/mtld-data.log
+log4j.appender.THIRD.DatePattern = '.'yyyy-MM-dd
+log4j.appender.THIRD.Append=true
+log4j.appender.THIRD.MaxFileSize=10MB
+log4j.appender.THIRD.MaxBackupIndex=100
+
+log4j.appender.THIRD.layout=org.apache.log4j.PatternLayout
+log4j.appender.THIRD.layout.ConversionPattern=%d{ISO8601} %-5p [%c{3}] %x - %m%n
+log4j.appender.THIRD.Encoding=UTF-8
+
+# Error messages
+log4j.appender.errorOutput=org.apache.log4j.RollingFileAppender
+log4j.appender.errorOutput.File =${catalina.base}/logs/mtld-data-error.log
+
+log4j.appender.errorOutputfile.Append=true
+log4j.appender.errorOutput.MaxFileSize=10MB
+log4j.appender.errorOutput.MaxBackupIndex=100
+
+log4j.appender.errorOutput.DatePattern = '.'yyyy-MM-dd
+log4j.appender.errorOutput.layout=org.apache.log4j.PatternLayout
+log4j.appender.errorOutput.layout.ConversionPattern=%d{ISO8601} %-5p [%c{3}] %ex - %m%n
+log4j.appender.errorOutput.threshold=error
+
+###################### DATA ##########################
+
+# Root logger option  stdout
+log4j.appender.console=org.apache.log4j.ConsoleAppender
+log4j.appender.console.layout=org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern=%d{ISO8601} %-5p [%c{3}] %x - %m%n
+
+
+log4j.logger.org.tfa.mtld.web=${log.level}, FIRST, errorOutput
+log4j.logger.org.tfa.mtld.service=${log.level}, SECOND, errorOutput
+log4j.logger.org.tfa.mtld.data=${log.level}, THIRD, errorOutput
+
+
+# Detailed log levels
+log4j.logger.com.mchange.v2=WARN
+log4j.logger.v2.resourcepool=WARN
+log4j.logger.org.apache.commons.beanutils=ERROR
+

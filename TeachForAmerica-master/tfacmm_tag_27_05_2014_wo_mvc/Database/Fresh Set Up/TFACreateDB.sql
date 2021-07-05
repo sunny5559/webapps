@@ -1,0 +1,889 @@
+SET SERVEROUTPUT ON;
+DECLARE
+password varchar2(200):='tfa123';
+counter number;
+BEGIN
+
+/*Start: Create tablespace and user*/
+select count(*) into counter from dba_tablespaces where tablespace_name = UPPER('tbs_perm_01');
+if counter = 1 then
+EXECUTE IMMEDIATE 'DROP TABLESPACE tbs_perm_01 INCLUDING CONTENTS' ;
+end if;
+
+EXECUTE IMMEDIATE 'CREATE TABLESPACE tbs_perm_01 DATAFILE ''tbs_perm_01.dat'' SIZE 200M reuse ONLINE';
+
+select count(*) into counter from dba_tablespaces where tablespace_name = UPPER('tbs_temp_01');
+if counter = 1 then
+EXECUTE IMMEDIATE 'DROP TABLESPACE tbs_temp_01 INCLUDING CONTENTS';
+end if;
+
+EXECUTE IMMEDIATE 'CREATE TEMPORARY TABLESPACE tbs_temp_01
+  TEMPFILE ''tbs_temp_01.dbf''
+    SIZE 100M reuse
+    AUTOEXTEND ON';
+
+SELECT COUNT (*) INTO counter FROM dba_users WHERE username = UPPER ('tfauser');
+if counter = 1 then	
+	EXECUTE IMMEDIATE ('DROP USER tfauser CASCADE');
+end if;
+EXECUTE IMMEDIATE 'CREATE USER tfauser IDENTIFIED BY '||password||' DEFAULT TABLESPACE tbs_perm_01 TEMPORARY TABLESPACE tbs_temp_01
+QUOTA 200M on tbs_perm_01';
+
+EXECUTE IMMEDIATE 'GRANT CREATE SESSION TO tfauser';
+EXECUTE IMMEDIATE 'GRANT CREATE TABLE  TO tfauser';
+EXECUTE IMMEDIATE 'GRANT CREATE VIEW TO tfauser';
+EXECUTE IMMEDIATE 'GRANT CREATE ANY TRIGGER TO tfauser';
+EXECUTE IMMEDIATE 'GRANT CREATE ANY PROCEDURE TO tfauser';
+EXECUTE IMMEDIATE 'GRANT CREATE SEQUENCE TO tfauser';
+EXECUTE IMMEDIATE 'GRANT CREATE SYNONYM TO tfauser';
+/*End: Create tablespace and user*/
+
+/*Start: Create Sequence*/
+select COUNT (*) INTO counter from  all_sequences where sequence_name in ('HIBERNATE_SEQUENCE') and sequence_owner in UPPER('tfauser');
+if counter = 1 then
+EXECUTE IMMEDIATE 'DROP SEQUENCE  tfauser.HIBERNATE_SEQUENCE';
+end if;
+
+
+EXECUTE IMMEDIATE 'CREATE SEQUENCE tfauser.HIBERNATE_SEQUENCE
+  START WITH 1
+  MAXVALUE 9999999999999999999999999999
+  MINVALUE 1
+  NOCYCLE
+  CACHE 20
+  NOORDER';
+/*End: Create Sequence*/
+
+/*Start: Drop Existing tables*/
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('REGION') and owner = upper('tfauser');
+if counter = 1 then
+	EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.REGION DROP PRIMARY KEY CASCADE';
+	EXECUTE IMMEDIATE 'DROP TABLE  tfauser.REGION CASCADE CONSTRAINTS';
+end if;
+
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('TFA_USER') and owner = upper('tfauser');
+if counter = 1 then
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.TFA_USER DROP PRIMARY KEY CASCADE';
+EXECUTE IMMEDIATE 'DROP TABLE  tfauser.TFA_USER CASCADE CONSTRAINTS';
+end if;
+
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('CRITERIA_CATEGORY') and owner = upper('tfauser');
+if counter = 1 then
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.CRITERIA_CATEGORY DROP PRIMARY KEY CASCADE';
+EXECUTE IMMEDIATE 'DROP TABLE  tfauser.CRITERIA_CATEGORY CASCADE CONSTRAINTS';
+end if;
+
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('CRITERIA') and owner = upper('tfauser');
+if counter = 1 then
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.CRITERIA DROP PRIMARY KEY CASCADE';
+EXECUTE IMMEDIATE 'DROP TABLE  tfauser.CRITERIA CASCADE CONSTRAINTS';
+end if;
+
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('SCHOOL') and owner = upper('tfauser');
+if counter = 1 then
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.SCHOOL DROP PRIMARY KEY CASCADE';
+EXECUTE IMMEDIATE 'DROP TABLE  tfauser.SCHOOL CASCADE CONSTRAINTS';
+end if;
+
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('MTLD') and owner = upper('tfauser');
+if counter = 1 then
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.MTLD  DROP PRIMARY KEY CASCADE';
+EXECUTE IMMEDIATE 'DROP TABLE  tfauser.MTLD CASCADE CONSTRAINTS';
+end if;
+
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('CORP_MEMBER') and owner = upper('tfauser');
+if counter = 1 then
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.CORP_MEMBER DROP PRIMARY KEY CASCADE';
+EXECUTE IMMEDIATE 'DROP TABLE  tfauser.CORP_MEMBER CASCADE CONSTRAINTS';
+end if;
+
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('COHORT') and owner = upper('tfauser');
+if counter = 1 then
+	EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.COHORT DROP PRIMARY KEY CASCADE';
+	EXECUTE IMMEDIATE 'DROP TABLE  tfauser.COHORT CASCADE CONSTRAINTS';
+end if;
+
+SELECT count(*) INTO counter FROM all_tables WHERE table_name = upper('COHORT_DETAIL') and owner = upper('tfauser');
+if counter = 1 then
+	EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.COHORT_DETAIL DROP PRIMARY KEY CASCADE';
+	EXECUTE IMMEDIATE 'DROP TABLE  tfauser.COHORT_DETAIL CASCADE CONSTRAINTS';
+end if;
+/*End: Drop Existing tables*/
+
+/*Start: Create DB tables along with primary key*/
+EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.REGION
+(
+  REGION_ID           NUMBER(10)                NOT NULL,
+  CREATED_BY          VARCHAR2(255 CHAR),
+  CREATED_DATE        TIMESTAMP(6),
+  REGION_CODE         VARCHAR2(255 CHAR),
+  REGION_DESCRIPTION  VARCHAR2(255 CHAR),
+  REGION_NAME         VARCHAR2(255 CHAR),
+  UPDATED_BY          VARCHAR2(255 CHAR),
+  UPDATED_DATE        TIMESTAMP(6),
+  COHORT_COUNT        NUMBER(10)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.REGION ADD (
+  PRIMARY KEY
+  (REGION_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE)';
+
+
+
+
+  EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.TFA_USER
+(
+  USER_ID       NUMBER(10)                      NOT NULL,
+  CREATED_BY    VARCHAR2(255 CHAR),
+  CREATED_DATE  TIMESTAMP(6),
+  PASSWORD      VARCHAR2(255 CHAR),
+  UPDATED_BY    VARCHAR2(255 CHAR),
+  UPDATED_DATE  TIMESTAMP(6),
+  REGION_ID     NUMBER(10),
+  LOGIN_ID      VARCHAR2(255 CHAR),
+  EMAIL_ID      VARCHAR2(30 BYTE),
+  FIRST_NAME    VARCHAR2(255 CHAR),
+  LAST_NAME     VARCHAR2(255 CHAR)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.TFA_USER ADD (
+  PRIMARY KEY
+  (USER_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE,
+  UNIQUE (LOGIN_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE)';
+
+/*
+  EXECUTE IMMEDIATE 'ALTER TABLE  TFA_USER ADD (
+  CONSTRAINT FKD0BBA9DB811615E0 
+  FOREIGN KEY (REGION_ID) 
+  REFERENCES  REGION (REGION_ID)
+  ENABLE VALIDATE)';
+  
+  */
+	
+	
+	EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.CRITERIA_CATEGORY
+(
+  CATEGORY_ID   NUMBER(10)                      NOT NULL,
+  CREATED_BY    VARCHAR2(255 CHAR),
+  CREATED_DATE  TIMESTAMP(6),
+  NAME          VARCHAR2(255 CHAR),
+  UPDATED_BY    VARCHAR2(255 CHAR),
+  UPDATED_DATE  TIMESTAMP(6)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+
+--  There is no statement for index   SYS_C0012082.
+--  The object is created when the parent object is created.
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.CRITERIA_CATEGORY ADD (
+  PRIMARY KEY
+  (CATEGORY_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE)';
+
+	
+EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.CRITERIA
+(
+  CREATED_BY         VARCHAR2(255 CHAR),
+  CREATED_DATE       TIMESTAMP(6),
+  DESCRIPTION        VARCHAR2(255 CHAR),
+  FIELD_TYPE         VARCHAR2(255 CHAR),
+  FIELD_REQUIRED     NUMBER(1),
+  NAME               VARCHAR2(255 CHAR),
+  UPDATED_BY         VARCHAR2(255 CHAR),
+  UPDATED_DATE       TIMESTAMP(6),
+  CRITERIA_ID        NUMBER(10)                 NOT NULL,
+  CATEGORY_ID        NUMBER(10),
+  FIELD_VALIDATION   VARCHAR2(255 CHAR),
+  CLASS_API          VARCHAR2(255 BYTE),
+  FIELD_PLACEHOLDER  VARCHAR2(255 BYTE)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+
+--  There is no statement for index   SYS_C0012146.
+--  The object is created when the parent object is created.
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.CRITERIA ADD (
+  PRIMARY KEY
+  (CRITERIA_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE)';
+  /*
+ EXECUTE IMMEDIATE 'ALTER TABLE  CRITERIA ADD (
+  CONSTRAINT FK7459DF5FD9AB3E9F 
+  FOREIGN KEY (CATEGORY_ID) 
+  REFERENCES   CRITERIA_CATEGORY (CATEGORY_ID)
+  ENABLE VALIDATE)';	
+	*/
+	
+	
+
+
+	EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.SCHOOL
+(
+  SCHOOL_ID                    NUMBER(10)       NOT NULL,
+  ADDRESS                      VARCHAR2(255 CHAR),
+  CITY                         VARCHAR2(255 CHAR),
+  COUNTRY                      VARCHAR2(255 CHAR),
+  CREATED_BY                   VARCHAR2(255 CHAR),
+  CREATED_DATE                 TIMESTAMP(6),
+  DISTRICT                     VARCHAR2(255 CHAR),
+  LATITUDE                     VARCHAR2(255 CHAR),
+  LONGITUDE                    VARCHAR2(255 CHAR),
+  PROVINCE                     VARCHAR2(255 CHAR),
+  NAME                         VARCHAR2(255 CHAR),
+  TYPE                         VARCHAR2(255 CHAR),
+  STATE                        VARCHAR2(255 CHAR),
+  TYPE_CODE                    VARCHAR2(255 CHAR),
+  UPDATED_BY                   VARCHAR2(255 CHAR),
+  UPDATED_DATE                 TIMESTAMP(6),
+  ZIP_CODE                     VARCHAR2(255 CHAR),
+  REGION_ID                    NUMBER(10),
+  NEIGHBORHOOD                 VARCHAR2(255 CHAR),
+  PRINCIPAL_PREFERRED_MTLD_ID  NUMBER,
+  CMO_AFFILIATION              VARCHAR2(255 BYTE),
+  FEEDER_PATTERN_HS            VARCHAR2(255 BYTE),
+  MTLD_ID                      NUMBER(10),
+  SCHOOL_TFA_UID               VARCHAR2(255 CHAR)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+
+--  There is no statement for index   SYS_C0012091.
+--  The object is created when the parent object is created.
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.SCHOOL ADD (
+  PRIMARY KEY
+  (SCHOOL_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE)';
+ 
+	EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.MTLD
+(
+  MTLD_ID                    NUMBER(10)         NOT NULL,
+  PLACEMENT_ADVISOR_TFA_UID  VARCHAR2(255 CHAR),
+  TEACHING_YEAR_EXPERINCE    NUMBER(10),
+  ALUM                       NUMBER,
+  CMO_AFFILATION             VARCHAR2(255 CHAR),
+  CORPS_PP_NAME              VARCHAR2(255 CHAR),
+  CORPS_SUBJECT_GROUP        VARCHAR2(255 CHAR),
+  CORPS_SUBJECT_MODIFIER     VARCHAR2(255 CHAR),
+  CREATED_BY                 VARCHAR2(255 CHAR),
+  CREATED_DATE               TIMESTAMP(6),
+  DEMOGRAPHIC_INFO           VARCHAR2(255 CHAR),
+  FIRST_NAME                 VARCHAR2(255 CHAR),
+  GRADE_LEVEL                VARCHAR2(255 CHAR),
+  LAST_NAME                  VARCHAR2(255 CHAR),
+  LOW_INCOME_BACKGROUND      VARCHAR2(255 CHAR),
+  PERSON_COLOR               VARCHAR2(255 CHAR),
+  PRIMARY_MODE_TRASPORT      VARCHAR2(255 CHAR),
+  PRINCIPAL_PREFRENCE        VARCHAR2(255 CHAR),
+  SCHOOL_DISTRICT_CORPS      VARCHAR2(255 CHAR),
+  SPECIALITY_AREA            VARCHAR2(255 CHAR),
+  SUBJECT_TAUGHT             VARCHAR2(255 CHAR),
+  TENURE_ROLE                VARCHAR2(255 CHAR),
+  UPDATED_BY                 VARCHAR2(255 CHAR),
+  UPDATED_DATE               TIMESTAMP(6),
+  ZIP_CODE                   VARCHAR2(255 CHAR),
+  REGION_ID                  NUMBER(10),
+  SCHOOL_ID                  NUMBER(10),
+  CORPS_SCHOOL_ID            NUMBER(10),
+  CORPS_REGION_ID            NUMBER(10),
+  PRIMARY_SUBJECT            VARCHAR2(30 BYTE),
+  PLACEMENT_DISTRICT         VARCHAR2(30 BYTE),
+  PLACEMENT_SCHOOL_ID        NUMBER(10),
+  REGION_TAUGHT              NUMBER(10),
+  CORPS_YEARS                NUMBER,
+  NEIGHBORHOOD               VARCHAR2(255 BYTE),
+  CURRENT_TENURE             VARCHAR2(255 BYTE),
+  LATITUDE                   VARCHAR2(255 BYTE),
+  LONGITUDE                  VARCHAR2(255 BYTE),
+  ADDRESS                    VARCHAR2(255 BYTE),
+  STATE                      VARCHAR2(255 BYTE),
+  CITY                       VARCHAR2(255 BYTE),
+  ETHNICITY                  VARCHAR2(255 BYTE)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+
+--  There is no statement for index   SYS_C0012084.
+--  The object is created when the parent object is created.
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.MTLD ADD (
+  PRIMARY KEY
+  (MTLD_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE)';
+
+/*  
+  EXECUTE IMMEDIATE 'ALTER TABLE  MTLD ADD (
+  CONSTRAINT FK334D5F2F974A50 
+  FOREIGN KEY (REGION_TAUGHT) 
+  REFERENCES  REGION (REGION_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK334D5F4E291F2A 
+  FOREIGN KEY (CORPS_REGION_ID) 
+  REFERENCES  REGION (REGION_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK334D5F5366CF2A 
+  FOREIGN KEY (CORPS_SCHOOL_ID) 
+  REFERENCES  SCHOOL (SCHOOL_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK334D5F60183906 
+  FOREIGN KEY (PLACEMENT_SCHOOL_ID) 
+  REFERENCES  SCHOOL (SCHOOL_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK334D5F811615E0 
+  FOREIGN KEY (REGION_ID) 
+  REFERENCES  REGION (REGION_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK334D5F8653C5E0 
+  FOREIGN KEY (SCHOOL_ID) 
+  REFERENCES  SCHOOL (SCHOOL_ID)
+  ENABLE VALIDATE)';
+
+	
+	
+	EXECUTE IMMEDIATE 'ALTER TABLE  SCHOOL ADD (
+  CONSTRAINT FKC9E15B74811615E0 
+  FOREIGN KEY (REGION_ID) 
+  REFERENCES  REGION (REGION_ID)
+  ENABLE VALIDATE,
+  FOREIGN KEY (PRINCIPAL_PREFERRED_MTLD_ID) 
+  REFERENCES  MTLD (MTLD_ID)
+  ENABLE VALIDATE,
+  FOREIGN KEY (MTLD_ID) 
+  REFERENCES  MTLD (MTLD_ID)
+  ENABLE VALIDATE)';
+ 
+ */
+ 
+ EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.CORP_MEMBER
+(
+  CM_ID                         NUMBER(10)      NOT NULL,
+  FIRST_NAME                    VARCHAR2(255 CHAR),
+  LAST_NAME                     VARCHAR2(255 CHAR),
+  TFA_MASTER_UID                VARCHAR2(255 CHAR),
+  ADDRESS                       VARCHAR2(255 CHAR),
+  CELL_PHONE                    NUMBER(10),
+  CITY                          VARCHAR2(255 CHAR),
+  CMO_AFFILATION                VARCHAR2(255 CHAR),
+  COUNTRY                       VARCHAR2(255 CHAR),
+  DOB                           TIMESTAMP(6),
+  GENDER                        VARCHAR2(255 CHAR),
+  GRADE_LEVEL                   VARCHAR2(255 CHAR),
+  HIRING_STAGE                  VARCHAR2(255 CHAR),
+  HOME_PHONE                    NUMBER(10),
+  IS_HIRED                      NUMBER(1),
+  LOW_INCOME_BACKGROUND         NUMBER(1),
+  PARTNER_TYPE_CODE             VARCHAR2(255 CHAR),
+  PERSON_OF_COLOR               VARCHAR2(255 CHAR),
+  PROVINCE                      VARCHAR2(255 CHAR),
+  SSN                           VARCHAR2(255 CHAR),
+  STATE                         VARCHAR2(255 CHAR),
+  SUBJECT_GROUP                 VARCHAR2(255 CHAR),
+  SUBJECT_MODIFIER              VARCHAR2(255 CHAR),
+  SUBJECT_MODIFIER_DESCRIPTION  VARCHAR2(255 CHAR),
+  ZIP_CODE                      VARCHAR2(255 CHAR),
+  REGION_ID                     NUMBER(10),
+  CREATED_BY                    VARCHAR2(255 CHAR),
+  CREATED_DATE                  TIMESTAMP(6),
+  FEEDER_PATTERN_HS             VARCHAR2(255 CHAR),
+  UPDATED_BY                    VARCHAR2(255 CHAR),
+  UPDATED_DATE                  TIMESTAMP(6),
+  FILTER_ID                     NUMBER(10),
+  SCHOOL_ID                     NUMBER(10),
+  CURRENT_ADVISOR_ID            NUMBER(10),
+  PREVIOUS_ADVISOR_ID           NUMBER(10),
+  PRINCIPAL_PREFRENCE_ID        NUMBER(10),
+  CORPSYEAR                     VARCHAR2(255 BYTE),
+  SECOND_GEN_CM                 NUMBER(1)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+
+--  There is no statement for index   SYS_C0012078.
+--  The object is created when the parent object is created.
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.CORP_MEMBER ADD (
+  PRIMARY KEY
+  (CM_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE)';
+
+/*
+  EXECUTE IMMEDIATE 'ALTER TABLE  CORP_MEMBER ADD (
+  CONSTRAINT FK5A78C4CF789D1ECA 
+  FOREIGN KEY (FILTER_ID) 
+  REFERENCES  CM_FILTER (FILTER_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK5A78C4CF811615E0 
+  FOREIGN KEY (REGION_ID) 
+  REFERENCES  REGION (REGION_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK5A78C4CF8653C5E0 
+  FOREIGN KEY (SCHOOL_ID) 
+  REFERENCES  SCHOOL (SCHOOL_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK5A78C4CF8C48D0B2 
+  FOREIGN KEY (PREVIOUS_ADVISOR_ID) 
+  REFERENCES  MTLD (MTLD_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK5A78C4CFAEF62156 
+  FOREIGN KEY (PRINCIPAL_PREFRENCE_ID) 
+  REFERENCES  MTLD (MTLD_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FK5A78C4CFCD3B40D9 
+  FOREIGN KEY (CURRENT_ADVISOR_ID) 
+  REFERENCES  MTLD (MTLD_ID)
+  ENABLE VALIDATE)';
+ 
+	*/
+	
+	
+	
+	EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.COHORT
+(
+  COHORT_ID                     NUMBER(10)      NOT NULL,
+  CHARTER_PARTNER_PERCENTAGE    VARCHAR2(255 CHAR),
+  OUTSIDE_CONSTRAINED_DISTANCE  VARCHAR2(255 CHAR),
+  CREATED_BY                    VARCHAR2(255 CHAR),
+  CREATED_DATE                  TIMESTAMP(6),
+  CRITERIA_MATCHED_PERCENTAGE   VARCHAR2(255 CHAR),
+  DISTRICT_PARTNER_PERCENTAGE   VARCHAR2(255 CHAR),
+  ECE_PERCENTAGE                VARCHAR2(255 CHAR),
+  ELEM_PERCENTAGE               VARCHAR2(255 CHAR),
+  NEIGHBOURHOOD_REPRESENTED     VARCHAR2(255 CHAR),
+  HS_GRADE_PERCENTAGE           VARCHAR2(255 CHAR),
+  LOW_INCOME_PERCENTAGE         VARCHAR2(255 CHAR),
+  MAX_DISTANCE_BETWEEN_SCHOOL   VARCHAR2(255 CHAR),
+  MS_GRADE_PERCENTAGE           VARCHAR2(255 CHAR),
+  NAME                          VARCHAR2(255 CHAR),
+  ONE_YEAR_CORP_PERCENTAGE      VARCHAR2(255 CHAR),
+  PERSON_COLOR_PERCENTAGE       VARCHAR2(255 CHAR),
+  SCHOOL_DISTRICT_REPRESENTED   VARCHAR2(255 CHAR),
+  SCHOOL_PER_COHORT             VARCHAR2(255 CHAR),
+  SCHOOL_REPRESENTED            VARCHAR2(255 CHAR),
+  SPED_MODIFIER_PERCENTAGE      VARCHAR2(255 CHAR),
+  TWO_YEAR_CORP_PERCENTAGE      VARCHAR2(255 CHAR),
+  UPDATED_BY                    VARCHAR2(255 CHAR),
+  UPDATED_DATE                  TIMESTAMP(6),
+  CM_ID                         NUMBER(10),
+  MTLD_ID                       NUMBER(10),
+  REGION_ID                     NUMBER(10),
+  IS_FINAL_COHORT               NUMBER(1),
+  FEEDER_PATTERN_HS             VARCHAR2(255 CHAR)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.COHORT ADD (
+  PRIMARY KEY
+  (COHORT_ID)
+  USING INDEX
+    TABLESPACE TBS_PERM_01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MAXSIZE          UNLIMITED
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                BUFFER_POOL      DEFAULT
+                FLASH_CACHE      DEFAULT
+                CELL_FLASH_CACHE DEFAULT
+               )
+  ENABLE VALIDATE)';
+
+
+/*
+EXECUTE IMMEDIATE 'ALTER TABLE  COHORT ADD (
+  CONSTRAINT FKAF3CEBF5811615E0 
+  FOREIGN KEY (REGION_ID) 
+  REFERENCES  REGION (REGION_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FKAF3CEBF5855E6F60 
+  FOREIGN KEY (MTLD_ID) 
+  REFERENCES  MTLD (MTLD_ID)
+  ENABLE VALIDATE,
+  CONSTRAINT FKAF3CEBF5C8E7099A 
+  FOREIGN KEY (CM_ID) 
+  REFERENCES  CORP_MEMBER (CM_ID)
+  ENABLE VALIDATE)';
+*/
+
+EXECUTE IMMEDIATE 'CREATE TABLE  tfauser.COHORT_DETAIL
+(
+  COHORT_DETAIL_ID  NUMBER,
+  COHORT_ID         NUMBER,
+  CM_ID             NUMBER,
+  CRITERIA_SCORE    VARCHAR2(1024 BYTE)
+)
+TABLESPACE TBS_PERM_01
+RESULT_CACHE (MODE DEFAULT)
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING';
+
+EXECUTE IMMEDIATE 'CREATE UNIQUE INDEX  COHORT_DETAIL_PK ON  tfauser.COHORT_DETAIL
+(COHORT_DETAIL_ID)
+LOGGING
+TABLESPACE TBS_PERM_01
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MAXSIZE          UNLIMITED
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+            FLASH_CACHE      DEFAULT
+            CELL_FLASH_CACHE DEFAULT
+           )
+NOPARALLEL';
+
+EXECUTE IMMEDIATE 'ALTER TABLE  tfauser.COHORT_DETAIL ADD (
+  CONSTRAINT COHORT_DETAIL_PK
+  PRIMARY KEY
+  (COHORT_DETAIL_ID)
+  USING INDEX  COHORT_DETAIL_PK
+  ENABLE VALIDATE)';
+
+
+/*
+EXECUTE IMMEDIATE 'ALTER TABLE  COHORT_DETAIL ADD (
+  FOREIGN KEY (COHORT_ID) 
+  REFERENCES  COHORT (COHORT_ID)
+  ENABLE VALIDATE,
+  FOREIGN KEY (CM_ID) 
+  REFERENCES  CORP_MEMBER (CM_ID)
+  ENABLE VALIDATE)';  
+ 
+*/	
+/*End: Create DB tables along with primary key*/
+
+END;		
+  /

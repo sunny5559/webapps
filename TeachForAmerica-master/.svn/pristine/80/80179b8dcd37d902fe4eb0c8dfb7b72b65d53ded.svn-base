@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>MTLDManager</artifactId>
+    <groupId>com.mtld</groupId>
+    <version>0.0.1</version>
+    <relativePath>../</relativePath>
+  </parent>
+  <artifactId>mtld-services</artifactId>
+  <name>mtld-services</name>
+  <description>mtld-services</description>
+  <version>1.0.0</version>
+  
+   <!-- Properties for build -->
+  <properties>
+    <springframework.version>3.2.0.RELEASE</springframework.version>
+    <resteasy.version>2.2.1.GA</resteasy.version>
+    <mtld-data.version>0.0.1</mtld-data.version>
+    <tomcat.home>${env.CATALINA_HOME}</tomcat.home>
+  </properties>
+  
+    <build>
+        <filters>
+            <filter>${project.basedir}/src/main/filters/${project.env}.properties</filter>
+        </filters>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <version>1.9.0</version>
+                <configuration>
+                    <header>${project.basedir}/../src/etc/header.txt</header>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <dependencies>
+    <dependency>
+      <groupId>com.mtld</groupId>
+      <artifactId>mtld-data</artifactId>
+      <version>${mtld-data.version}</version>
+    </dependency>
+     <!-- utilities -->
+       <!--  <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
+        <dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.3</version>
+		</dependency> -->
+
+        <!-- Test dependency -->
+         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency> 
+		
+		<!-- Added by Divesh Solanki to avoid compile break 
+			coming with code provided by client
+			To:do : Need to verify version of jar
+		-->
+		<dependency>
+			<groupId>org.opensextant</groupId>
+			<artifactId>geodesy</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+
+		<!-- End of changes done by Divesh Solanki -->
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+			<version>${springframework.version}</version>
+		</dependency> 
+        <dependency>
+            <groupId>com.mycila.maven-license-plugin</groupId>
+            <artifactId>maven-license-plugin</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+        <!-- Modification by Anurag Meshram - START -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.8.4</version>
+			<scope>test</scope>
+		</dependency>
+	    <!-- Modification by Anurag Meshram - END  -->
+    </dependencies>
+</project>

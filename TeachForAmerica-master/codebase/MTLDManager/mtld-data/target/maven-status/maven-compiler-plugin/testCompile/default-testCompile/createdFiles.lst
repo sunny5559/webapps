@@ -1,0 +1,6 @@
+org\tfa\mtld\data\repository\TFARepositoryImplTest.class
+org\tfa\mtld\data\repository\SchoolRepositoryImplTest.class
+org\tfa\mtld\data\repository\RegionRepositoryImplTest.class
+org\tfa\mtld\data\repository\CriteriaRepositoryImplTest.class
+org\tfa\mtld\data\repository\UserRepositoryImplTest.class
+org\tfa\mtld\data\repository\MtldCmRepositoryImplTest.class

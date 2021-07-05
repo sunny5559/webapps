@@ -1,0 +1,415 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CM-MTLD Matching Application</title>
+<link href="css/main_style.css" rel="stylesheet" type="text/css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<!--  Custome Radio BTN ----------- -->
+
+<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+    
+
+<script src="js/jquery.screwdefaultbuttonsV2.js"></script>
+
+</head>
+
+<body>
+<div class="header">
+	<div class="container">
+    <div class="header_left"> <a href="home.html"><img src="images/logo.png" alt="Teach For America"></a>
+    </div>
+    
+    <div class="header_right"><a href="login.html" class="icon_btn logout"><img src="images/logout.png" width="17" height="18"></a><div class="user_name">Joey Wilson</div> </div>
+    <div class="clear"></div>
+    </div>
+</div>
+<div class="container">
+<div id="banner"></div>
+
+	<div class="menu">
+    	<ul>
+        		<li><a href="#" class="selected"><img src="images/criteria_select_icon.png" width="22" height="22"> <span>Criteria Select</span></a></li>
+                <li><a href="#"><img src="images/cm_cohorts_icon.png" width="22" height="22"> <span>CM Cohorts</span></a></li>
+                <li class="last"><a href="#"><img src="images/mtld_info_icon.png" width="22" height="22"> <span>MTLD Info</span></a></li>
+        </ul>
+    
+    </div>
+
+	<div class="region_name">Region Name: <a href="#">GNO</a></div>
+    
+    <div class="criteria_heading">
+    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td align="left" valign="middle">&nbsp;</td>
+    <td colspan="2" align="left" valign="middle" class="gray11">Exclude</td>
+    <td align="center" valign="middle">&nbsp;</td>
+    <td colspan="2" align="right" valign="middle" class="gray11">Highest Priority</td>
+    <td align="left" valign="middle">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Select Your Criteria(s)</td>
+    <td width="6%" align="center" valign="middle">0</td>
+    <td width="6%" align="center" valign="middle">1</td>
+    <td width="6%" align="center" valign="middle">2</td>
+    <td width="6%" align="center" valign="middle">3</td>
+    <td width="6%" align="center" valign="middle">4</td>
+    <td width="20%" align="left" valign="middle"><img src="images/gray_arrow.png" width="25" height="25" style="float:left">Set Priority</td>
+  </tr>
+</table>
+
+  </div>
+  
+  <div class="criteria_title">
+    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle" class="expand_collaps_img"><img src="images/expand_icon.png" width="11" height="7" class="expand_icon" style="display:none"> <img src="images/collapes_icon.png" width="11" height="7" class="collapes_icon"></td>
+    <td width="95%" align="left" valign="middle">Basics</td>
+    </tr>
+</table>
+
+  </div>
+  <div class="criteria_detail">
+  
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Restrict MTLD-CM ratio</td>
+    <td width="6%" align="center" valign="middle"  class="exclude"><input name="radio" type="radio" class="custome_radio" id="radio" value="radio" checked></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio" type="radio" class="custome_radio" id="radio2" value="radio"></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio" type="radio" class="custome_radio" id="radio3" value="radio"></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio" type="radio" class="custome_radio" id="radio4" value="radio"></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio" type="radio" class="custome_radio" id="radio5" value="radio"></td>
+    <td width="20%" align="left" valign="middle"><input type="text" name="textfield" id="textfield" placeholder="#CMs/MTLD" class="input_box"></td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Balance cohorts for 1CM and 2CMs
+</td>
+    <td align="center" valign="middle" class="exclude"><input name="radio1" type="radio"  class="custome_radio" id="radio" value="radio" checked ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio1" id="radio2" value="radio"  class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio1" id="radio3" value="radio"  class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio1" id="radio4" value="radio"  class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input name="radio1" type="radio" id="radio5" value="radio"  class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Restrict MTLD:School ratio (e.g. fewer MTLDs per school)
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio2" type="radio" id="radio" value="radio" checked  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio2" id="radio2" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio2" id="radio3" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio2" id="radio4" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio2" type="radio" id="radio5" value="radio"  class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  </table>
+  
+  </div>
+
+
+
+
+ <div class="criteria_title">
+    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+        <td width="5%" height="35" align="center" valign="middle" class="expand_collaps_img"><img src="images/expand_icon.png" width="11" height="7" class="expand_icon"> <img src="images/collapes_icon.png" width="11" height="7" class="collapes_icon" style="display:none"></td>
+    <td width="95%" align="left" valign="middle">Content</td>
+    </tr>
+</table>
+
+  </div>
+  <div class="criteria_detail" style="display:-------------none">
+  
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Match CMs with same grade level (e.g. ELEM, MS, HS)
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio3" type="radio" id="radio" value="radio" checked  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio3" id="radio2" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio3" id="radio3" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio3" id="radio4" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio3" type="radio" id="radio5" value="radio"  class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle"></td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Match CMs with same subject (e.g. Math, English, Foreign language)
+</td>
+    <td align="center" valign="middle" class="exclude"><input name="radio4" type="radio" id="radio" value="radio" checked  class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio4" id="radio2" value="radio"  class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio4" id="radio3" value="radio"  class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio4" id="radio4" value="radio"  class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input name="radio4" type="radio" id="radio5" value="radio"  class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Match CMs with same specialty area (e.g. SPED, Bilingual)
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio5" type="radio" id="radio" value="radio" checked  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio5" id="radio2" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio5" id="radio3" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio5" id="radio4" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio5" type="radio" id="radio5" value="radio"  class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  </table>
+  
+  </div>
+  
+  
+  
+  
+   <div class="criteria_title">
+    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+        <td width="5%" height="35" align="center" valign="middle" class="expand_collaps_img"><img src="images/expand_icon.png" width="11" height="7" class="expand_icon"> <img src="images/collapes_icon.png" width="11" height="7" class="collapes_icon" style="display:none"></td>
+    <td width="95%" align="left" valign="middle">Geography </td>
+    </tr>
+</table>
+
+  </div>
+  <div class="criteria_detail" style="display:------------none">
+  
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Minimize MTLD Travel Distance (e.g. distance between CMs)
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio6" type="radio" id="radio" value="radio" checked  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio6" id="radio2" value="radio"  class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio6" id="radio3" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio6" id="radio4" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio6" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle"><input type="text" name="textfield" id="textfield" placeholder="MTLD Distance" class="input_box"></td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Minimize # Districts per cohort
+</td>
+    <td align="center" valign="middle" class="exclude"><input name="radio7" type="radio" id="radio" value="radio" checked class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio7" id="radio2" value="radio" class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio7" id="radio3" value="radio" class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio7" id="radio4" value="radio" class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input name="radio7" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="0" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Match CMs within same neighborhood
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio8" type="radio" id="radio" value="radio" checked class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio8" id="radio2" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio8" id="radio3" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio8" id="radio4" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio8" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+ <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Match MTLD with Prior Experience in District
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio9" type="radio" id="radio" value="radio" checked class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio9" id="radio2" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio9" id="radio3" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio9" id="radio4" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio9" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Match CMs within same feeder pattern school
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio22" type="radio" id="radio" value="radio" checked class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio22" id="radio2" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio22" id="radio3" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio22" type="radio" id="radio4" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio22" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  </table>
+  
+  </div>
+  
+  
+  
+  
+   <div class="criteria_title">
+    	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+        <td width="5%" height="35" align="center" valign="middle" class="expand_collaps_img"><img src="images/expand_icon.png" width="11" height="7" class="expand_icon"> <img src="images/collapes_icon.png" width="11" height="7" class="collapes_icon" style="display:none"></td>
+    <td width="95%" align="left" valign="middle">Relationships</td>
+    </tr>
+</table>
+
+  </div>
+  <div class="criteria_detail" style="display:-------------none">
+  
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Maintain MTLD and CM relationships from prior year
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio33" type="radio" id="radio" value="radio" checked class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio33" id="radio2" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio33" id="radio3" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio33" id="radio4" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio33" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle"></td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Match MTLD with Principal preference (if known)
+</td>
+    <td align="center" valign="middle" class="exclude"><input name="radio44" type="radio" id="radio" value="radio" checked class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio44" id="radio2" value="radio" class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio44" id="radio3" value="radio" class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input type="radio" name="radio44" id="radio4" value="radio" class="custome_radio" ></td>
+    <td align="center" valign="middle" class="other"><input name="radio44" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Maintain MTLD placement at school from prior year
+</span></td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio55" type="radio" id="radio" value="radio" checked class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio55" id="radio2" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio55" id="radio3" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio55" id="radio4" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio55" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+ <tr>
+    <td width="5%" height="35" align="center" valign="middle">&nbsp;</td>
+    <td width="45%" align="left" valign="middle">Match CMs at same CMO
+</td>
+    <td width="6%" align="center" valign="middle" class="exclude"><input name="radio66" type="radio" id="radio" value="radio" checked class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio66" id="radio2" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio66" id="radio3" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input type="radio" name="radio66" id="radio4" value="radio" class="custome_radio" ></td>
+    <td width="6%" align="center" valign="middle" class="other"><input name="radio66" type="radio" id="radio5" value="radio" class="custome_radio" ></td>
+    <td width="20%" align="left" valign="middle">&nbsp;</td>
+  </tr>
+  </table>
+  
+  </div>
+  
+  <div class="make_matches_btn">
+  	
+  <div class="left_col">
+  <table width="100%" border="0" cellspacing="0" cellpadding="3">
+  <tr>
+    <td width="3%" align="left" valign="middle"><input type="checkbox" name="checkbox" id="checkbox">
+      <label for="checkbox"></label></td>
+    <td width="97%" align="left" valign="middle">Include MTLD info for CM-MTLD pairing?</td>
+  </tr>
+  <tr>
+    <td align="left" valign="middle"><input type="checkbox" name="checkbox2" id="checkbox2"></td>
+    <td align="left" valign="middle">Include unhired CMs in matches?</td>
+  </tr>
+</table>
+
+  </div>
+  <div class="right_col">
+  <input name="" type="button" value="Make My Matches" class="green_btn"  onclick="location.href='cm_cohorts.html'">
+  </div>
+  	
+  <div class="clear"></div>
+  </div>
+  
+  
+	<div class="clear"></div>
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	$('.criteria_title').click(function(){
+		
+		if ($(this).closest('.criteria_title').next('.criteria_detail').is(':hidden')) {
+			
+			$(this).closest('.criteria_title').next('.criteria_detail').slideDown("fast");
+			$(this).closest('.criteria_title').find('.expand_icon').hide();
+			$(this).closest('.criteria_title').find('.collapes_icon').show();
+			
+		}else{
+			$(this).closest('.criteria_title').next('.criteria_detail').slideUp("fast");
+			$(this).closest('.criteria_title').find('.expand_icon').show();
+			$(this).closest('.criteria_title').find('.collapes_icon').hide();
+		}
+		
+	});
+	
+	
+
+	/* Custome Radio Btn and Check Box   */
+	
+	
+	$('.custome_radio').screwDefaultButtons({
+				image: 'url("images/custom_radio.png")',
+				width: 22,
+				height: 22
+	});
+	
+	$(".exclude .custome_radio").addClass("red_radio");
+	
+	$(".exclude .custome_radio").click(function(){
+		
+		$(this).addClass("red_radio");
+		
+	});
+	
+	$(".other .custome_radio").click(function(){
+		
+		$(this).parent(".other").parent("tr").find(".exclude .custome_radio").removeClass("red_radio");
+	});
+	
+	/*$('.custome_radio').screwDefaultButtons({
+				image: 'url("images/custom_radio.png")',
+				width: 22,
+				height: 22
+			});
+		
+	$('.exclude .custome_radio').css('background-image', 'images/custom_radio_red.png');
+			
+	$('.exclude input:radio').screwDefaultButtons({
+				image: 'url("images/custom_radio_red.png")',
+				width: 22,
+				height: 22
+			});		
+			
+			 $('input:checkbox').screwDefaultButtons({
+				image: 'url("images/checkboxSmall.jpg")',
+				width: 43,
+				height: 43
+			});
+			*/
+			
+			
+
+
+
+
+
+});
+</script>
+</body>
+</html>
